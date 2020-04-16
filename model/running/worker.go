@@ -5,7 +5,6 @@ type Worker struct {
 	HostIp      string
 	Port        string
 	WorkerState string
-	WorkerType  string
 	Name        string
 	Disable     bool
 }

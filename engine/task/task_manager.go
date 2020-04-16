@@ -2,17 +2,17 @@ package task
 
 import (
 	"dispatch/constant"
-	"dispatch/dao"
+	"dispatch/storage"
 	"dispatch/engine/worker"
 	"dispatch/model/running"
 )
 
 type taskManager struct {
-	storage       dao.Storage
+	storage       storage.Storage
 	workerManager worker.WorkerManager
 }
 
-func NewTaskManager(storage dao.Storage, workerManager worker.WorkerManager) *taskManager {
+func NewTaskManager(storage storage.Storage, workerManager worker.WorkerManager) *taskManager {
 	return &taskManager{
 		storage:       storage,
 		workerManager: workerManager,

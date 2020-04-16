@@ -4,15 +4,15 @@ import (
 	"sync"
 
 	"dispatch/constant"
-	"dispatch/dao"
+	"dispatch/storage"
 )
 
 type workerManager struct {
 	workers *sync.Map
-	storage dao.Storage
+	storage storage.Storage
 }
 
-func NewWorkerManager(storage dao.Storage) *workerManager {
+func NewWorkerManager(storage storage.Storage) *workerManager {
 	return &workerManager{
 		workers: &sync.Map{},
 		storage: storage,

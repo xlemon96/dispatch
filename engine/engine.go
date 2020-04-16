@@ -1,31 +1,32 @@
 package engine
 
 import (
+	"fmt"
 	"time"
 
-	"dispatch/dao"
 	"dispatch/engine/dispatch"
 	"dispatch/engine/task"
 	"dispatch/engine/worker"
 	"dispatch/model/running"
+	"dispatch/storage"
 )
 
-type engine struct {
+type Engine struct {
 	dispatch      dispatch.Dispatch
 	workerManager worker.WorkerManager
 	taskManager   task.TaskManager
 }
 
-func NewEngine(dao dao.Storage) *engine {
-	engine := &engine{
+func NewEngine(dao storage.Storage) *Engine {
+	Engine := &Engine{
 		dispatch:      dispatch.NewDispatch(dao),
 		workerManager: worker.NewWorkerManager(dao),
 	}
-	engine.taskManager = task.NewTaskManager(dao, engine.workerManager)
-	return engine
+	Engine.taskManager = task.NewTaskManager(dao, Engine.workerManager)
+	return Engine
 }
 
-func (e *engine) Start() error {
+func (e *Engine) Start() error {
 	if err := e.workerManager.Start(); err != nil {
 		return err
 	}
@@ -36,7 +37,7 @@ func (e *engine) Start() error {
 	return nil
 }
 
-func (e *engine) startDispatch() {
+func (e *Engine) startDispatch() {
 	todoDags := e.dispatch.GetTodoDag()
 	for {
 		select {
@@ -45,6 +46,7 @@ func (e *engine) startDispatch() {
 				continue
 			}
 			for _, dag := range dagBag.GetDagInstances() {
+				fmt.Printf("start to send dag, %v", *dag)
 				go func(dag *running.DAGInstance) {
 					defer func() {
 						if err := recover(); err != nil {

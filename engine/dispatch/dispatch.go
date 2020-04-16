@@ -5,13 +5,13 @@ import (
 	"sync"
 
 	"dispatch/constant"
-	"dispatch/dao"
+	"dispatch/storage"
 	"dispatch/model/running"
 )
 
 type dispatch struct {
 	sync.Mutex
-	taskDao    dao.Storage
+	taskDao    storage.Storage
 	taskGraphs map[int64]*taskGraph //key为taskID
 	taskDags   map[int64]*dag       //key为taskID
 	todoDags   chan *dagBag
@@ -27,12 +27,13 @@ type dagBag struct {
 	dagInstances []*running.DAGInstance
 }
 
-func NewDispatch(taskDao dao.Storage) *dispatch {
+func NewDispatch(taskDao storage.Storage) *dispatch {
 	return &dispatch{
 		taskDao:    taskDao,
 		taskGraphs: make(map[int64]*taskGraph),
 		taskDags:   make(map[int64]*dag),
-		todoDags:   make(chan *dagBag),
+		//todo,缓冲区大小
+		todoDags:   make(chan *dagBag, 100),
 	}
 }
 
@@ -89,15 +90,16 @@ func (d *dispatch) initTask(task *running.Task) error {
 		}
 		doneDag := make([]string, 0)
 		for _, dag := range dags {
-			if dag.State == constant.DAGStateFailed && !dag.IgnoreErr {
+			if dag.State == constant.DAGStateFailed {
 				return nil
 			}
-			if (dag.State == constant.DAGStateFailed && dag.IgnoreErr) || dag.State == constant.DAGStateSucceed {
+			if dag.State == constant.DAGStateFailed || dag.State == constant.DAGStateSucceed {
 				doneDag = append(doneDag, int64ToString(dag.Id))
 			}
 		}
 		graph.InitGraph()
 		graph.AddDoneTasks(doneDag)
+		graph.PrintGraph()
 		//todo,判断task是否已经完成
 	}
 	d.taskGraphs[task.Id] = graph

@@ -1,6 +1,8 @@
 package engine
 
 import (
+	"dispatch/common"
+	"dispatch/engine/communication"
 	"fmt"
 	"time"
 
@@ -15,6 +17,7 @@ type Engine struct {
 	dispatch      dispatch.Dispatch
 	workerManager worker.WorkerManager
 	taskManager   task.TaskManager
+	workerClient  communication.WorkerClient
 }
 
 func NewEngine(dao storage.Storage) *Engine {
@@ -22,7 +25,8 @@ func NewEngine(dao storage.Storage) *Engine {
 		dispatch:      dispatch.NewDispatch(dao),
 		workerManager: worker.NewWorkerManager(dao),
 	}
-	Engine.taskManager = task.NewTaskManager(dao, Engine.workerManager)
+	Engine.workerClient = communication.NewWorkerClientImpl(common.NewDefaultClient())
+	Engine.taskManager = task.NewTaskManager(dao, Engine.workerManager, Engine.workerClient)
 	return Engine
 }
 

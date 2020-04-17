@@ -25,3 +25,10 @@ created by net/http.(*Server).Serve
  
 [dispatch]2020/04/17 18:01:15 [method: POST, url: /task?Action=UpdateDAG, body: { 	"test": 80 }, remote_addr:127.0.0.1:63440, action: UpdateDAG, x-forwarded-for: , elapsed: 308.108µs]
 185.703µs]
+[dispatch]2020/04/17 18:10:30 prepair: action: UpdateDAG, content: {
+	"test": 80
+}
+[dispatch]2020/04/17 18:10:30 [method: POST, url: /task?Action=UpdateDAG, body: { 	"test": 80 }, remote_addr:127.0.0.1:64858, action: UpdateDAG, x-forwarded-for: , elapsed: 1.002306ms]
+[dispatch]2020/04/17 18:11:06 prepair: action: UpdateDAG, content: {"test": 80}
+[dispatch]2020/04/17 18:11:06 [method: POST, url: /task?Action=UpdateDAG, body: {"test": 80}, remote_addr:127.0.0.1:64858, action: UpdateDAG, x-forwarded-for: , elapsed: 77.297µs]
+[dispatch]2020/04/17 18:17:18 start engine......

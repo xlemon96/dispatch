@@ -56,7 +56,7 @@ func initDB() *gorm.DB {
 		panic(err)
 	}
 	//设置数据库参数
-	db.LogMode(true)
+	//db.LogMode(true)
 	db.SingularTable(true)
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(10)
@@ -64,7 +64,7 @@ func initDB() *gorm.DB {
 }
 
 func initLog() *log.Logger {
-	file, err := os.OpenFile("/Users/jiajianyun/go/src/dispatch/log.txt", os.O_RDWR, 777)
+	file, err := os.OpenFile("/Users/jiajianyun/go/src/dispatch/log.txt", os.O_RDWR | os.O_APPEND, 777)
 	if err != nil {
 		panic(err)
 	}
@@ -76,7 +76,6 @@ func initWebServer(logger *log.Logger) (*http.Server, *util.Router) {
 	router := util.NewRouter()
 	router.Logger = logger
 	router.RegisterFilters(router.PrepareFilter, router.InvokerFilter)
-
 	server := &http.Server{
 		Addr: "127.0.0.1:8899",
 	}

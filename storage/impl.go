@@ -47,13 +47,13 @@ func (s *storageImpl) DescribeTasks(state string) ([]*running.Task, error) {
 	if err != nil {
 		return nil, err
 	}
-	for _, dbt := range tasks	 {
+	for _, task := range tasks	 {
 		rtasks = append(rtasks, &running.Task{
-			Id:           dbt.Id,
-			Type:         dbt.TaskType,
-			State:        dbt.TaskState,
-			CreatedTime:  dbt.CreatedTime,
-			UpdateTime:   dbt.UpdateTime,
+			Id:           task.Id,
+			Type:         task.TaskType,
+			State:        task.TaskState,
+			CreatedTime:  task.CreatedTime,
+			UpdateTime:   task.UpdateTime,
 		})
 	}
 	return rtasks, nil

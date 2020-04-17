@@ -1,48 +1,77 @@
 package engine
 
 import (
-	"dispatch/common"
-	"dispatch/engine/communication"
 	"fmt"
-	"time"
+	"log"
+	"net/http"
 
+	"dispatch/common"
+	"dispatch/constant"
+	"dispatch/engine/communication"
 	"dispatch/engine/dispatch"
+	"dispatch/engine/heartbeat"
 	"dispatch/engine/task"
 	"dispatch/engine/worker"
 	"dispatch/model/running"
 	"dispatch/storage"
+	"dispatch/util"
 )
 
 type Engine struct {
+	*util.Server
+	communication.DispatchCommunication
+	logger        *log.Logger
+	server        *http.Server
+	router        *util.Router
 	dispatch      dispatch.Dispatch
 	workerManager worker.WorkerManager
-	taskManager   task.TaskManager
 	workerClient  communication.WorkerClient
+	taskManager   task.TaskManager
+	heartbeat     heartbeat.Heartbeat
 }
 
-func NewEngine(dao storage.Storage) *Engine {
+func NewEngine(dao storage.Storage, logger *log.Logger, server *http.Server, router *util.Router) *Engine {
 	Engine := &Engine{
-		dispatch:      dispatch.NewDispatch(dao),
-		workerManager: worker.NewWorkerManager(dao),
+		dispatch:      dispatch.NewDispatch(dao, logger),
+		workerManager: worker.NewWorkerManager(dao, logger),
+		workerClient:  communication.NewWorkerClientImpl(common.NewDefaultClient(), logger),
 	}
-	Engine.workerClient = communication.NewWorkerClientImpl(common.NewDefaultClient())
-	Engine.taskManager = task.NewTaskManager(dao, Engine.workerManager, Engine.workerClient)
+	Engine.DispatchCommunication = communication.NewDispatchCommunicationImpl(dao,
+		Engine.dispatch, Engine.workerManager, logger)
+	Engine.taskManager = task.NewTaskManager(dao, Engine.workerManager, Engine.workerClient, logger)
+	Engine.heartbeat = heartbeat.NewHeartbeatImpl(Engine.workerClient, Engine.workerManager, logger)
+	Engine.server = server
+	Engine.router = router
+	Engine.logger = logger
+	Engine.Server = util.NewServer(Engine.doStart, Engine.doClose)
 	return Engine
 }
 
-func (e *Engine) Start() error {
+func (e *Engine) doStart() error {
+	e.initHandler()
 	if err := e.workerManager.Start(); err != nil {
 		return err
 	}
+	if err := e.heartbeat.Start(); err != nil {
+		return err
+	}
 	if err := e.dispatch.Start(); err != nil {
+		return err
+	}
+	http.Handle(fmt.Sprintf("/%s", "task"), e.router)
+	if err := e.server.ListenAndServe(); err != nil {
 		return err
 	}
 	go e.startDispatch()
 	return nil
 }
 
+func (e *Engine) doClose() {
+	//todo
+}
+
 func (e *Engine) startDispatch() {
-	todoDags := e.dispatch.GetTodoDag()
+	todoDags := e.dispatch.GetTodoDags()
 	for {
 		select {
 		case dagBag := <-todoDags:
@@ -50,7 +79,6 @@ func (e *Engine) startDispatch() {
 				continue
 			}
 			for _, dag := range dagBag.GetDagInstances() {
-				fmt.Printf("start to send dag, %v", *dag)
 				go func(dag *running.DAGInstance) {
 					defer func() {
 						if err := recover(); err != nil {
@@ -60,17 +88,13 @@ func (e *Engine) startDispatch() {
 						}
 					}()
 					//todo，校验是否dag已经分配
-					workerInfo, err := e.workerManager.Select()
-					if err != nil {
-						//todo,重新发送dagbag
-					}
+					workerInfo := e.workerManager.Select()
 					if workerInfo == nil {
-						time.Sleep(time.Second)
 						dagResend := dispatch.NewDagBag(dagBag.GetTask(), []*running.DAGInstance{dag})
 						todoDags <- dagResend
 						return
 					}
-					err = e.taskManager.SendTask(workerInfo.GetWorker().HostIp, workerInfo.GetWorker().Port, dag)
+					err := e.taskManager.SendTask(workerInfo.GetWorker().HostIp, workerInfo.GetWorker().Port, dag)
 					if err != nil {
 						//todo
 						//e.dispatch.SendFail(dagInstance.TaskId, dagInstance.Id)
@@ -80,4 +104,12 @@ func (e *Engine) startDispatch() {
 			}
 		}
 	}
+}
+
+func (e *Engine) initHandler() {
+	e.router.RegisterHandleFunc(constant.UpdateDAGInstance, e.UpdateDAGInstance)
+	e.router.RegisterHandleFunc(constant.DescribeDAGInstance, e.DescribeDAGInstance)
+	e.router.RegisterHandleFunc(constant.DescribeDAGInstances, e.DescribeDAGInstances)
+	e.router.RegisterHandleFunc(constant.DescribeDAGInstancesByTask, e.DescribeDAGInstancesByTask)
+	e.router.RegisterHandleFunc(constant.UpdateTask, e.UpdateTask)
 }

@@ -2,6 +2,7 @@ package communication
 
 import (
 	"fmt"
+	"log"
 
 	"dispatch/common"
 	"dispatch/constant"
@@ -9,14 +10,17 @@ import (
 )
 
 type workerClientImpl struct {
+	logger *log.Logger
 	client *common.HttpClient
 }
 
-func NewWorkerClientImpl(httpclient *common.HttpClient) *workerClientImpl {
-	return &workerClientImpl{client:httpclient}
+func NewWorkerClientImpl(httpclient *common.HttpClient, logger *log.Logger) *workerClientImpl {
+	return &workerClientImpl{
+		logger: logger,
+		client: httpclient,
+	}
 }
 
-//调度器下发任务到worker
 func (c *workerClientImpl) SendTask(request *api.SendTaskRequest) (*api.SendTaskResponse, error) {
 	response := &api.SendTaskResponse{}
 	url := generateUrl(request.HostIp, request.Port)
@@ -27,8 +31,14 @@ func (c *workerClientImpl) SendTask(request *api.SendTaskRequest) (*api.SendTask
 	return response, nil
 }
 
-func (c *workerClientImpl) Heartbeat(request *api.HeartBeatRequest) (*api.HeartBeatResponse, error)  {
-	return nil, nil
+func (c *workerClientImpl) Heartbeat(request *api.HeartBeatRequest) (*api.HeartBeatResponse, error) {
+	response := &api.HeartBeatResponse{}
+	url := generateUrl(request.HostIp, request.Port)
+	err := c.client.CallHttpResponse(url, constant.HeartBeatActionName, request, response)
+	if err != nil {
+		return nil, err
+	}
+	return response, nil
 }
 
 func generateUrl(hostIp, port string) string {

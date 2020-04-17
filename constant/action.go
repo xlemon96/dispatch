@@ -5,3 +5,11 @@ const (
 	SendTaskActionName    = "SendTask"
 	SendTriggerActionName = "SendTrigger"
 )
+
+const (
+	UpdateDAGInstance          = "UpdateDAG"
+	DescribeDAGInstances       = "DescribeDAGs"
+	DescribeDAGInstancesByTask = "DescribeDAGsByTask"
+	DescribeDAGInstance        = "DescribeDAG"
+	UpdateTask                 = "UpdateTask"
+)

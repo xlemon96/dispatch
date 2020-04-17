@@ -1,6 +1,7 @@
 package task
 
 import (
+	"log"
 	"time"
 
 	"dispatch/constant"
@@ -13,14 +14,16 @@ import (
 )
 
 type taskManager struct {
+	logger        *log.Logger
 	storage       storage.Storage
 	workerManager worker.WorkerManager
 	workerClient  communication.WorkerClient
 }
 
 func NewTaskManager(storage storage.Storage, workerManager worker.WorkerManager,
-	workerClient communication.WorkerClient) *taskManager {
+	workerClient communication.WorkerClient, logger *log.Logger) *taskManager {
 	return &taskManager{
+		logger:        logger,
 		storage:       storage,
 		workerManager: workerManager,
 		workerClient:  workerClient,

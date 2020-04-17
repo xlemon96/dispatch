@@ -1,6 +1,8 @@
 package worker
 
 import (
+	"log"
+	"math/rand"
 	"sync"
 
 	"dispatch/constant"
@@ -8,12 +10,14 @@ import (
 )
 
 type workerManager struct {
+	logger  *log.Logger
 	workers *sync.Map
 	storage storage.Storage
 }
 
-func NewWorkerManager(storage storage.Storage) *workerManager {
+func NewWorkerManager(storage storage.Storage, logger *log.Logger) *workerManager {
 	return &workerManager{
+		logger:  logger,
 		workers: &sync.Map{},
 		storage: storage,
 	}
@@ -26,9 +30,12 @@ func (w *workerManager) Start() error {
 	return nil
 }
 
-func (w *workerManager) Select() (*WorkerInfo, error) {
-	//todo
-	return nil, nil
+func (w *workerManager) Select() *WorkerInfo {
+	workers := w.listWorkersByState(WorkerStateRunning)
+	if len(workers) == 0 {
+		return nil
+	}
+	return workers[rand.Intn(len(workers))]
 }
 
 func (w *workerManager) WorkerLoadIncrease(hostIp, port string) {
@@ -55,6 +62,31 @@ func (w *workerManager) WorkerLoadDecrease(hostIp, port string) {
 	})
 }
 
+func (w *workerManager) ListAllWorkers() ([]*WorkerInfo, error) {
+	workers := make([]*WorkerInfo, 0)
+	w.workers.Range(func(key, value interface{}) bool {
+		if worker, ok := value.(*WorkerInfo); ok {
+			workers = append(workers, worker)
+		}
+		return true
+	})
+	return workers, nil
+}
+
+func (w *workerManager) UpdateWorkerState(name, state string) error {
+	if v, ok := w.workers.Load(name); ok {
+		workerInfo := v.(*WorkerInfo)
+		workerInfo.GetWorker().WorkerState = state
+		if workerInfo.GetWorker().WorkerState == WorkerStateDead {
+			//todo
+		}
+	}
+	if err := w.storage.UpdateWorker(name, state); err != nil {
+		//todo
+	}
+	return nil
+}
+
 func (w *workerManager) init() error {
 	workers, err := w.storage.DescribeWorkers()
 	if err != nil {
@@ -76,4 +108,17 @@ func (w *workerManager) init() error {
 		w.WorkerLoadIncrease(dag.HostIp, dag.Port)
 	}
 	return nil
+}
+
+func (w *workerManager) listWorkersByState(state string) []*WorkerInfo {
+	workers := make([]*WorkerInfo, 0)
+	w.workers.Range(func(key, value interface{}) bool {
+		if worker, ok := value.(*WorkerInfo); ok {
+			if worker.GetWorker().WorkerState == state {
+				workers = append(workers, worker)
+			}
+		}
+		return true
+	})
+	return workers
 }

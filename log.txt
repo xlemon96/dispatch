@@ -1,0 +1,27 @@
+[dispatch]2020/04/17 18:02:30 prepair: action: UpdateDAG, content: {
+	"test": 80
+}
+[dispatch]2020/04/17 18:02:30 [method: POST, url: /task?Action=UpdateDAG, body: { 	"test": 80 }, remote_addr:127.0.0.1:63647, action: UpdateDAG, x-forwarded-for: , elapsed: 317.105µs]
+il.(*Router).InvokerFilter.func1(0xc000184230, 0xc000294008)
+	/Users/jiajianyun/go/src/dispatch/util/router.go:285 +0x57
+panic(0x1432ca0, 0xc0002782a0)
+	/usr/local/go/src/runtime/panic.go:679 +0x1b2
+dispatch/engine/communication.(*dispatchCommunicationImpl).UpdateDAGInstance(0xc0001a8b00, 0xc0002b4000, 0xc000294008, 0xb001c00005f758, 0x0)
+	/Users/jiajianyun/go/src/dispatch/engine/communication/dispatch_communication.go:32 +0xce
+dispatch/util.HandleFunc.Handle(0xc0001de000, 0xc0002b4000, 0xc000294008, 0x9, 0xc0001e2088)
+	/Users/jiajianyun/go/src/dispatch/util/router.go:84 +0x3a
+dispatch/util.(*Router).InvokerFilter(0xc000184230, 0xc0002b4000, 0xc000294008, 0xc0002a8020)
+	/Users/jiajianyun/go/src/dispatch/util/router.go:292 +0x131
+dispatch/util.(*Router).ServeHTTP(0xc000184230, 0x1545480, 0xc0002ac000, 0xc0002a0100)
+	/Users/jiajianyun/go/src/dispatch/util/router.go:255 +0x9ed
+net/http.(*ServeMux).ServeHTTP(0x1806c60, 0x1545480, 0xc0002ac000, 0xc0002a0000)
+	/usr/local/go/src/net/http/server.go:2387 +0x1bd
+net/http.serverHandler.ServeHTTP(0xc0001cc000, 0x1545480, 0xc0002ac000, 0xc0002a0000)
+	/usr/local/go/src/net/http/server.go:2802 +0xa4
+net/http.(*conn).serve(0xc000296000, 0x1546300, 0xc000276040)
+	/usr/local/go/src/net/http/server.go:1890 +0x875
+created by net/http.(*Server).Serve
+	/usr/local/go/src/net/http/server.go:2928 +0x384
+ 
+[dispatch]2020/04/17 18:01:15 [method: POST, url: /task?Action=UpdateDAG, body: { 	"test": 80 }, remote_addr:127.0.0.1:63440, action: UpdateDAG, x-forwarded-for: , elapsed: 308.108µs]
+185.703µs]

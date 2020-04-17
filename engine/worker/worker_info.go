@@ -6,6 +6,14 @@ import (
 	"dispatch/model/running"
 )
 
+const (
+	WorkerStatePending = "pending"
+	WorkerStateRunning = "running"
+	WorkerStateLoss    = "loss"
+	WorkerStateDead    = "dead"
+	WorkerStateAll     = "all" // 查询状态
+)
+
 type WorkerInfo struct {
 	sync.Mutex
 	runningTasks int32

@@ -13,15 +13,7 @@ import (
 	"confmgr/model/api"
 )
 
-/*
-@Time : 2020/1/2 13:58
-@Author : jiajianyun
-@File : HttpClient
-@Software: GoLand
-@Description:
-*/
-
-var (
+const (
 	defaultConnectTimeout        int = 500
 	defaultMaxIdleConns          int = 100
 	defaultTimerInterval         int = 60
@@ -53,11 +45,9 @@ func (c *HttpClient) CallHttpResponse(url string, action string, param interface
 	url = url + "?Action=" + action
 	response := &api.JDCommonResponse{}
 	response.Data = result
-
 	if err := c.DoRequest("POST", url, nil, param, response); err != nil {
 		return err
 	}
-
 	if response.Code != 0 {
 		return errors.New(response.Message + response.Detail)
 	}

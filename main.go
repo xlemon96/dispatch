@@ -2,29 +2,48 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
+	"runtime"
+	"sync"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 
 	"dispatch/engine"
 	"dispatch/storage"
+	"dispatch/util"
 )
 
-func main() {
-	waitStop(initEnv())
+func init() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
 }
 
-func initEnv() *engine.Engine {
-	db := initDB()
-	s := storage.NewStorageImpl(db)
-	e := engine.NewEngine(s)
-	err := e.Start()
-	if err != nil {
+func main() {
+	e := initEngine()
+	wg := &sync.WaitGroup{}
+	tn := util.New(nil, e.Stop, func() {
+		wg.Done()
+	})
+	if err := tn.Run(func() error {
+		wg.Add(1)
+		if err := e.Start(); err != nil {
+			panic(err)
+		}
+		wg.Wait()
+		return nil
+	}); err != nil {
 		panic(err)
 	}
+}
+
+func initEngine() *engine.Engine {
+	db := initDB()
+	logger := initLog()
+	webServer, router := initWebServer(logger)
+	s := storage.NewStorageImpl(db)
+	e := engine.NewEngine(s, logger, webServer, router)
 	return e
 }
 
@@ -44,9 +63,22 @@ func initDB() *gorm.DB {
 	return db
 }
 
-func waitStop(e *engine.Engine) {
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
-	<-signalChan
-	fmt.Println("byebye")
+func initLog() *log.Logger {
+	file, err := os.OpenFile("/Users/jiajianyun/go/src/dispatch/log.txt", os.O_RDWR, 777)
+	if err != nil {
+		panic(err)
+	}
+	logger := log.New(file, "[dispatch]", log.LstdFlags)
+	return logger
+}
+
+func initWebServer(logger *log.Logger) (*http.Server, *util.Router) {
+	router := util.NewRouter()
+	router.Logger = logger
+	router.RegisterFilters(router.PrepareFilter, router.InvokerFilter)
+
+	server := &http.Server{
+		Addr: "127.0.0.1:8899",
+	}
+	return server, router
 }

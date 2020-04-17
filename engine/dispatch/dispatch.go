@@ -1,16 +1,18 @@
 package dispatch
 
 import (
+	"log"
 	"strconv"
 	"sync"
 
 	"dispatch/constant"
-	"dispatch/storage"
 	"dispatch/model/running"
+	"dispatch/storage"
 )
 
 type dispatch struct {
 	sync.Mutex
+	logger     *log.Logger
 	taskDao    storage.Storage
 	taskGraphs map[int64]*taskGraph //key为taskID
 	taskDags   map[int64]*dag       //key为taskID
@@ -27,13 +29,14 @@ type dagBag struct {
 	dagInstances []*running.DAGInstance
 }
 
-func NewDispatch(taskDao storage.Storage) *dispatch {
+func NewDispatch(taskDao storage.Storage, logger *log.Logger) *dispatch {
 	return &dispatch{
+		logger:     logger,
 		taskDao:    taskDao,
 		taskGraphs: make(map[int64]*taskGraph),
 		taskDags:   make(map[int64]*dag),
 		//todo,缓冲区大小
-		todoDags:   make(chan *dagBag, 100),
+		todoDags: make(chan *dagBag, 100),
 	}
 }
 
@@ -51,7 +54,7 @@ func (d *dispatch) Start() error {
 	return nil
 }
 
-func (d *dispatch) GetTodoDag() chan *dagBag {
+func (d *dispatch) GetTodoDags() chan *dagBag {
 	return d.todoDags
 }
 
@@ -99,7 +102,7 @@ func (d *dispatch) initTask(task *running.Task) error {
 		}
 		graph.InitGraph()
 		graph.AddDoneTasks(doneDag)
-		graph.PrintGraph()
+		//graph.PrintGraph()
 		//todo,判断task是否已经完成
 	}
 	d.taskGraphs[task.Id] = graph

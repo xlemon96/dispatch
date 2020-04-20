@@ -1,9 +1,10 @@
 package dao
 
 import (
-	"dispatch/model/bean"
 	"testing"
 	"time"
+
+	"github.com/navieboy/dispatch/model/bean"
 )
 
 var dagInstanceDao = &DagInstanceDaoImpl{}

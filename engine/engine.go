@@ -5,16 +5,16 @@ import (
 	"log"
 	"net/http"
 
-	"dispatch/common"
-	"dispatch/constant"
-	"dispatch/engine/communication"
-	"dispatch/engine/dispatch"
-	"dispatch/engine/heartbeat"
-	"dispatch/engine/task"
-	"dispatch/engine/worker"
-	"dispatch/model/running"
-	"dispatch/storage"
-	"dispatch/util"
+	"github.com/navieboy/dispatch/common"
+	"github.com/navieboy/dispatch/constant"
+	"github.com/navieboy/dispatch/engine/communication"
+	"github.com/navieboy/dispatch/engine/dispatch"
+	"github.com/navieboy/dispatch/engine/heartbeat"
+	"github.com/navieboy/dispatch/engine/task"
+	"github.com/navieboy/dispatch/engine/worker"
+	"github.com/navieboy/dispatch/model/running"
+	"github.com/navieboy/dispatch/storage"
+	"github.com/navieboy/dispatch/util"
 )
 
 type Engine struct {

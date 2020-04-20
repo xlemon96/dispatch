@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"sync"
 
-	"dispatch/constant"
-	"dispatch/model/running"
-	"dispatch/storage"
+	"github.com/navieboy/dispatch/constant"
+	"github.com/navieboy/dispatch/model/running"
+	"github.com/navieboy/dispatch/storage"
 )
 
 type dispatch struct {

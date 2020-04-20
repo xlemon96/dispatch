@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"confmgr/model/api"
+	"github.com/navieboy/dispatch/model/api"
 )
 
 const (
@@ -43,7 +43,7 @@ func NewDefaultClient() *HttpClient {
 
 func (c *HttpClient) CallHttpResponse(url string, action string, param interface{}, result interface{}) error {
 	url = url + "?Action=" + action
-	response := &api.JDCommonResponse{}
+	response := &api.CommonResponse{}
 	response.Data = result
 	if err := c.DoRequest("POST", url, nil, param, response); err != nil {
 		return err

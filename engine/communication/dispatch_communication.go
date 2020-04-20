@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	"dispatch/engine/dispatch"
-	"dispatch/engine/worker"
-	"dispatch/model/api"
-	"dispatch/storage"
-	"dispatch/util"
+	"github.com/navieboy/dispatch/engine/dispatch"
+	"github.com/navieboy/dispatch/engine/worker"
+	"github.com/navieboy/dispatch/model/api"
+	"github.com/navieboy/dispatch/storage"
+	"github.com/navieboy/dispatch/util"
 )
 
 type dispatchCommunicationImpl struct {

@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"sync"
 
-	"dispatch/constant"
-	"dispatch/storage"
+	"github.com/navieboy/dispatch/constant"
+	"github.com/navieboy/dispatch/storage"
 )
 
 type workerManager struct {

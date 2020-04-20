@@ -11,9 +11,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 
-	"dispatch/engine"
-	"dispatch/storage"
-	"dispatch/util"
+	"github.com/navieboy/dispatch/engine"
+	"github.com/navieboy/dispatch/storage"
+	"github.com/navieboy/dispatch/util"
 )
 
 func init() {
@@ -64,7 +64,7 @@ func initDB() *gorm.DB {
 }
 
 func initLog() *log.Logger {
-	file, err := os.OpenFile("/Users/jiajianyun/go/src/dispatch/log.txt", os.O_RDWR | os.O_APPEND, 777)
+	file, err := os.OpenFile("/Users/jiajianyun/go/src/github.com/navieboy/dispatch/log.txt", os.O_RDWR | os.O_APPEND, 777)
 	if err != nil {
 		panic(err)
 	}

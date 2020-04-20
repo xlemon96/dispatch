@@ -3,7 +3,7 @@ package worker
 import (
 	"sync"
 
-	"dispatch/model/running"
+	"github.com/navieboy/dispatch/model/running"
 )
 
 const (

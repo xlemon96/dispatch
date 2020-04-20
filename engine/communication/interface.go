@@ -1,8 +1,8 @@
 package communication
 
 import (
-	"dispatch/model/api"
-	"dispatch/util"
+	"github.com/navieboy/dispatch/model/api"
+	"github.com/navieboy/dispatch/util"
 )
 
 type DispatchCommunication interface {

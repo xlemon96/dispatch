@@ -5,9 +5,9 @@ import (
 
 	"github.com/jinzhu/gorm"
 
-	"dispatch/model/bean"
-	"dispatch/model/running"
-	"dispatch/storage/dao"
+	"github.com/navieboy/dispatch/model/bean"
+	"github.com/navieboy/dispatch/model/running"
+	"github.com/navieboy/dispatch/storage/dao"
 )
 
 type storageImpl struct {

@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"dispatch/model/running"
+	"github.com/navieboy/dispatch/model/running"
 )
 
 type Storage interface {

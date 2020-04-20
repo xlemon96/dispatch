@@ -4,13 +4,13 @@ import (
 	"log"
 	"time"
 
-	"dispatch/constant"
-	"dispatch/engine/communication"
-	"dispatch/engine/worker"
-	"dispatch/model/api"
-	"dispatch/model/running"
-	"dispatch/storage"
-	"dispatch/util"
+	"github.com/navieboy/dispatch/constant"
+	"github.com/navieboy/dispatch/engine/communication"
+	"github.com/navieboy/dispatch/engine/worker"
+	"github.com/navieboy/dispatch/model/api"
+	"github.com/navieboy/dispatch/model/running"
+	"github.com/navieboy/dispatch/storage"
+	"github.com/navieboy/dispatch/util"
 )
 
 type taskManager struct {

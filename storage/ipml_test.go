@@ -7,7 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 
-	"dispatch/storage/dao"
+	"github.com/navieboy/dispatch/storage/dao"
 )
 
 var db = createDB()

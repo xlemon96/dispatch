@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"dispatch/model/bean"
+	"github.com/navieboy/dispatch/model/bean"
 )
 
 var workerDao = &WorkerDaoImpl{}

@@ -4,9 +4,9 @@ import (
 	"log"
 	"time"
 
-	"dispatch/engine/communication"
-	"dispatch/engine/worker"
-	"dispatch/model/api"
+	"github.com/navieboy/dispatch/engine/communication"
+	"github.com/navieboy/dispatch/engine/worker"
+	"github.com/navieboy/dispatch/model/api"
 )
 
 const (

@@ -15,7 +15,7 @@ import (
 
 type taskManager struct {
 	logger        *log.Logger
-	storage       storage.Storage
+	storage       storage.TaskDao
 	workerManager worker.WorkerManager
 	workerClient  communication.WorkerClient
 }

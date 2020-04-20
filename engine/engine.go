@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/navieboy/dispatch/common"
 	"github.com/navieboy/dispatch/constant"
@@ -48,21 +49,26 @@ func NewEngine(dao storage.Storage, logger *log.Logger, server *http.Server, rou
 }
 
 func (e *Engine) doStart() error {
+	var err error
 	e.logger.Println("start engine......")
 	e.initHandler()
-	if err := e.workerManager.Start(); err != nil {
+	if err = e.workerManager.Start(); err != nil {
 		return err
 	}
-	if err := e.heartbeat.Start(); err != nil {
+	if err = e.heartbeat.Start(); err != nil {
 		return err
 	}
-	if err := e.dispatch.Start(); err != nil {
+	if err = e.dispatch.Start(); err != nil {
 		return err
 	}
 	go e.startDispatch()
-
-	http.Handle(fmt.Sprintf("/%s", "task"), e.router)
-	if err := e.server.ListenAndServe(); err != nil {
+	go func() {
+		http.Handle(fmt.Sprintf("/%s", "task"), e.router)
+		err = e.server.ListenAndServe()
+	}()
+	time.Sleep(time.Second)
+	if err != nil {
+		e.logger.Println("start engine fail......")
 		return err
 	}
 	e.logger.Println("start engine success......")

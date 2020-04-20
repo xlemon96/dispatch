@@ -12,7 +12,7 @@ import (
 type workerManager struct {
 	logger  *log.Logger
 	workers *sync.Map
-	storage storage.WorkerDao
+	storage storage.Storage
 }
 
 func NewWorkerManager(storage storage.Storage, logger *log.Logger) *workerManager {

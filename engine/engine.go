@@ -1,13 +1,9 @@
 package engine
 
 import (
-	"fmt"
 	"log"
-	"net/http"
-	"time"
 
 	"github.com/navieboy/dispatch/common"
-	"github.com/navieboy/dispatch/constant"
 	"github.com/navieboy/dispatch/engine/communication"
 	"github.com/navieboy/dispatch/engine/dispatch"
 	"github.com/navieboy/dispatch/engine/heartbeat"
@@ -15,14 +11,10 @@ import (
 	"github.com/navieboy/dispatch/engine/worker"
 	"github.com/navieboy/dispatch/model/running"
 	"github.com/navieboy/dispatch/storage"
-	"github.com/navieboy/dispatch/util"
 )
 
 type Engine struct {
-	*util.Server
 	logger                *log.Logger
-	server                *http.Server
-	router                *util.Router
 	dispatch              dispatch.Dispatch
 	workerManager         worker.WorkerManager
 	workerClient          communication.WorkerClient
@@ -31,7 +23,7 @@ type Engine struct {
 	heartbeat             heartbeat.Heartbeat
 }
 
-func NewEngine(dao storage.Storage, logger *log.Logger, server *http.Server, router *util.Router) *Engine {
+func NewEngine(dao storage.Storage, logger *log.Logger) *Engine {
 	Engine := &Engine{
 		dispatch:      dispatch.NewDispatch(dao, logger),
 		workerManager: worker.NewWorkerManager(dao, logger),
@@ -41,17 +33,13 @@ func NewEngine(dao storage.Storage, logger *log.Logger, server *http.Server, rou
 		Engine.dispatch, Engine.workerManager, logger)
 	Engine.taskManager = task.NewTaskManager(dao, Engine.workerManager, Engine.workerClient, logger)
 	Engine.heartbeat = heartbeat.NewHeartbeatImpl(Engine.workerClient, Engine.workerManager, logger)
-	Engine.server = server
-	Engine.router = router
 	Engine.logger = logger
-	Engine.Server = util.NewServer(Engine.doStart, Engine.doClose)
 	return Engine
 }
 
-func (e *Engine) doStart() error {
+func (e *Engine) Start() error {
 	var err error
 	e.logger.Println("start engine......")
-	e.initHandler()
 	if err = e.workerManager.Start(); err != nil {
 		return err
 	}
@@ -62,21 +50,16 @@ func (e *Engine) doStart() error {
 		return err
 	}
 	go e.startDispatch()
-	go func() {
-		http.Handle(fmt.Sprintf("/%s", "task"), e.router)
-		err = e.server.ListenAndServe()
-	}()
-	time.Sleep(time.Second)
-	if err != nil {
-		e.logger.Println("start engine fail......")
-		return err
-	}
 	e.logger.Println("start engine success......")
 	return nil
 }
 
-func (e *Engine) doClose() {
+func (e *Engine) Close() {
 	//todo
+}
+
+func (e *Engine) GetDispatchCommunication() communication.DispatchCommunication {
+	return e.dispatchCommunication
 }
 
 func (e *Engine) startDispatch() {
@@ -113,12 +96,4 @@ func (e *Engine) startDispatch() {
 			}
 		}
 	}
-}
-
-func (e *Engine) initHandler() {
-	e.router.RegisterHandleFunc(constant.UpdateDAGInstance, e.dispatchCommunication.UpdateDAGInstance)
-	e.router.RegisterHandleFunc(constant.DescribeDAGInstance, e.dispatchCommunication.DescribeDAGInstance)
-	e.router.RegisterHandleFunc(constant.DescribeDAGInstances, e.dispatchCommunication.DescribeDAGInstances)
-	e.router.RegisterHandleFunc(constant.DescribeDAGInstancesByTask, e.dispatchCommunication.DescribeDAGInstancesByTask)
-	e.router.RegisterHandleFunc(constant.UpdateTask, e.dispatchCommunication.UpdateTask)
 }

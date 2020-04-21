@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/navieboy/dispatch/storage/dao"
 )
@@ -57,5 +58,6 @@ func TestStorageImpl_DescribeWorkers(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+	assert.NoError(t, err)
 	fmt.Println(workers)
 }

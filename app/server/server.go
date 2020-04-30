@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/navieboy/dispatch/engine"
-	"github.com/navieboy/dispatch/storage"
-	"github.com/navieboy/dispatch/util"
+	"github.com/naivelife/dispatch/engine"
+	"github.com/naivelife/dispatch/storage"
+	"github.com/naivelife/dispatch/util"
 )
 
 type Server struct {

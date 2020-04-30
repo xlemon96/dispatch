@@ -8,7 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/navieboy/dispatch/storage/dao"
+	"github.com/naivelife/dispatch/storage/dao"
 )
 
 var db = createDB()

@@ -9,9 +9,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 
-	"github.com/navieboy/dispatch/constant"
-	"github.com/navieboy/dispatch/engine"
-	"github.com/navieboy/dispatch/util"
+	"github.com/naivelife/dispatch/constant"
+	"github.com/naivelife/dispatch/engine"
+	"github.com/naivelife/dispatch/util"
 )
 
 func initDB() *gorm.DB {

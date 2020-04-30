@@ -8,7 +8,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 
-	"github.com/navieboy/dispatch/model/bean"
+	"github.com/naivelife/dispatch/model/bean"
 )
 
 var test_db *gorm.DB

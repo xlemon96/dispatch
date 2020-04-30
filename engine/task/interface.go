@@ -1,7 +1,7 @@
 package task
 
 import (
-	"github.com/navieboy/dispatch/model/running"
+	"github.com/naivelife/dispatch/model/running"
 )
 
 type TaskManager interface {

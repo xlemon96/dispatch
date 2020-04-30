@@ -3,7 +3,7 @@ package dao
 import (
 	"github.com/jinzhu/gorm"
 
-	"github.com/navieboy/dispatch/model/bean"
+	"github.com/naivelife/dispatch/model/bean"
 )
 
 type WorkerDaoImpl struct {

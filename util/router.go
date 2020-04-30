@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/navieboy/dispatch/constant"
-	"github.com/navieboy/dispatch/model/api"
+	"github.com/naivelife/dispatch/constant"
+	"github.com/naivelife/dispatch/model/api"
 )
 
 var (

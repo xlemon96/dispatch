@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/navieboy/dispatch/model/api"
+	"github.com/naivelife/dispatch/model/api"
 )
 
 const (

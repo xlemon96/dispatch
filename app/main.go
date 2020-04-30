@@ -4,8 +4,8 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/navieboy/dispatch/app/server"
-	"github.com/navieboy/dispatch/util"
+	"github.com/naivelife/dispatch/app/server"
+	"github.com/naivelife/dispatch/util"
 )
 
 func init() {

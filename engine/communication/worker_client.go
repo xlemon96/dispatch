@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/navieboy/dispatch/common"
-	"github.com/navieboy/dispatch/constant"
-	"github.com/navieboy/dispatch/model/api"
+	"github.com/naivelife/dispatch/common"
+	"github.com/naivelife/dispatch/constant"
+	"github.com/naivelife/dispatch/model/api"
 )
 
 type workerClientImpl struct {

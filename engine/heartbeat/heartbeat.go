@@ -4,9 +4,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/navieboy/dispatch/engine/communication"
-	"github.com/navieboy/dispatch/engine/worker"
-	"github.com/navieboy/dispatch/model/api"
+	"github.com/naivelife/dispatch/engine/communication"
+	"github.com/naivelife/dispatch/engine/worker"
+	"github.com/naivelife/dispatch/model/api"
 )
 
 const (
